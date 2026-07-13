@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Freedoom: Phase 1</title>
+<style>
+  html,body{margin:0;padding:0;height:100%;background:#000;color:#ddd;font-family:system-ui,sans-serif}
+  #wrap{display:flex;flex-direction:column;height:100%}
+  #stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+  /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+  canvas.frame{border:0;padding:0;max-width:100%;max-height:100%;image-rendering:pixelated}
+  #status{padding:6px;text-align:center;font-size:13px;color:#9aa}
+  footer{height:30px;display:flex;align-items:center;justify-content:center;gap:14px;font-size:12px;color:#889}
+  footer a{color:#8bd}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="status">Loading Freedoom…</div>
+  <div id="stage">
+    <canvas class="frame" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+  </div>
+  <footer>
+    <span>Freedoom © Freedoom project (BSD) · engine: Chocolate Doom WASM (GPL-2.0)</span>
+    <a href="licenses/">Licenses &amp; credits</a>
+  </footer>
+</div>
+<script>
+  var commonArgs = ["-iwad", "freedoom1.wad", "-window", "-nogui", "-config", "default.cfg"];
+  var Module = {
+    onRuntimeInitialized: () => {
+      callMain(commonArgs);
+      document.getElementById("status").textContent =
+        "Arrows move · Ctrl fire · Space use · Shift run · Esc menu";
+    },
+    preRun: [
+      () => {
+        Module.FS.createPreloadedFile("", "freedoom1.wad", "freedoom1.wad", true, true);
+        Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
+      },
+    ],
+    printErr: (t) => console.warn(t),
+    canvas: (function () {
+      var canvas = document.getElementById("canvas");
+      canvas.addEventListener("webglcontextlost", function (e) {
+        alert("WebGL context lost. You will need to reload the page.");
+        e.preventDefault();
+      }, false);
+      return canvas;
+    })(),
+    setStatus: (t) => { if (t) document.getElementById("status").textContent = t; },
+  };
+</script>
+<script type="text/javascript" src="websockets-doom.js"></script>
+</body>
+</html>
