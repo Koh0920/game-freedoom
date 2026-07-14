@@ -39,6 +39,10 @@ expect_in 'noInitialRun: true' site/index.html
 expect_in 'onRuntimeInitialized:' site/index.html
 expect_in '"-nomusic"' site/index.html
 expect_in 'callMain(commonArgs)' site/index.html
+expect_in 'message.type !== "ato.session-control.v1"' site/index.html
+expect_in 'Module.pauseMainLoop()' site/index.html
+expect_in 'if (atoPausedMainLoop) Module.resumeMainLoop()' site/index.html
+expect_in 'event.source !== window.parent' site/index.html
 expect_in 'href="DOOM-WASM-GPL-2.0.md"' site/licenses/index.html
 
 printf 'reproducibility checks passed\n'
