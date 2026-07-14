@@ -37,6 +37,7 @@ expect_in '3f9b264f3e3ce503b4fb7f6bdcb1f419d93c7b546f4df3e874dd878db9688f59  fre
 expect_in '/www/licenses/DOOM-WASM-GPL-2.0.md' Dockerfile
 expect_in 'noInitialRun: true' site/index.html
 expect_in 'onRuntimeInitialized:' site/index.html
+expect_in '"-nomusic"' site/index.html
 expect_in 'callMain(commonArgs)' site/index.html
 expect_in 'href="DOOM-WASM-GPL-2.0.md"' site/licenses/index.html
 

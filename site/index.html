@@ -26,13 +26,13 @@
   </footer>
 </div>
 <script>
-  var commonArgs = ["-iwad", "freedoom1.wad", "-window", "-nogui", "-config", "default.cfg"];
+  var commonArgs = ["-iwad", "freedoom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg"];
   var Module = {
     noInitialRun: true,
     onRuntimeInitialized: () => {
-      callMain(commonArgs);
       document.getElementById("status").textContent =
         "Arrows move · Ctrl fire · Space use · Shift run · Esc menu";
+      callMain(commonArgs);
     },
     preRun: [
       () => {

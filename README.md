@@ -18,8 +18,10 @@ immutable digest. Build-only autotools come from the HTTPS Ubuntu snapshot
 `20260701T000000Z` with exact package versions, so a failed live mirror cannot
 silently leave the build without candidates. The page sets
 `Module.noInitialRun = true` and starts the engine only from
-`onRuntimeInitialized`, after preloaded files are ready. The capsule ships the
-doom-wasm/Chocolate Doom GPL-2.0 text alongside the Freedoom license and credits.
+`onRuntimeInitialized`, after preloaded files are ready. It preserves the pinned
+upstream browser launch contract's `-nomusic` flag so SDL music initialization
+cannot block startup. The capsule ships the doom-wasm/Chocolate Doom GPL-2.0
+text alongside the Freedoom license and credits.
 
 Run `tests/verify-reproducibility.sh` for the repository's static supply-chain
 and startup-contract checks.
