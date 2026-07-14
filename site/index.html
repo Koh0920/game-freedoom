@@ -28,6 +28,7 @@
 <script>
   var commonArgs = ["-iwad", "freedoom1.wad", "-window", "-nogui", "-config", "default.cfg"];
   var Module = {
+    noInitialRun: true,
     onRuntimeInitialized: () => {
       callMain(commonArgs);
       document.getElementById("status").textContent =
