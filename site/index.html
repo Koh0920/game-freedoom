@@ -27,12 +27,15 @@
 </div>
 <script>
   var commonArgs = ["-iwad", "freedoom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg"];
+  var atoGameStarted = false;
+  var atoPausedMainLoop = false;
   var Module = {
     noInitialRun: true,
     onRuntimeInitialized: () => {
       document.getElementById("status").textContent =
         "Arrows move · Ctrl fire · Space use · Shift run · Esc menu";
       callMain(commonArgs);
+      atoGameStarted = true;
     },
     preRun: [
       () => {
@@ -51,6 +54,68 @@
     })(),
     setStatus: (t) => { if (t) document.getElementById("status").textContent = t; },
   };
+
+  // Optional Ato live-continuation pause profile. Only the trusted parent
+  // console can suspend this already-running Emscripten main loop.
+  (function () {
+    var trustedParents = new Set([
+      "https://ato.run",
+      "https://app.ato.run",
+      "https://stg-app.ato.run",
+    ]);
+
+    function trustedParent(origin) {
+      if (trustedParents.has(origin)) return true;
+      try {
+        var url = new URL(origin);
+        return (
+          (url.protocol === "http:" || url.protocol === "https:") &&
+          (url.hostname === "localhost" || url.hostname === "127.0.0.1")
+        );
+      } catch (_) {
+        return false;
+      }
+    }
+
+    window.addEventListener("message", function (event) {
+      var message = event.data;
+      if (
+        event.source !== window.parent ||
+        !trustedParent(event.origin) ||
+        !message ||
+        message.type !== "ato.session-control.v1" ||
+        (message.action !== "pause" && message.action !== "resume") ||
+        typeof message.request_id !== "string" ||
+        message.request_id.length > 128
+      ) return;
+
+      var ok = false;
+      try {
+        if (!atoGameStarted) {
+          ok = false;
+        } else if (message.action === "pause") {
+          if (!atoPausedMainLoop) {
+            Module.pauseMainLoop();
+            atoPausedMainLoop = true;
+          }
+          ok = true;
+        } else {
+          if (atoPausedMainLoop) Module.resumeMainLoop();
+          atoPausedMainLoop = false;
+          ok = true;
+        }
+      } catch (_) {
+        ok = false;
+      }
+
+      event.source.postMessage({
+        type: "ato.session-control.v1.ack",
+        action: message.action,
+        request_id: message.request_id,
+        ok: ok,
+      }, event.origin);
+    });
+  })();
 </script>
 <script type="text/javascript" src="websockets-doom.js"></script>
 </body>
