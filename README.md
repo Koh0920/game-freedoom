@@ -14,10 +14,12 @@ project's GitHub release and verifies SHA-256
 The engine is built from cloudflare/doom-wasm commit
 `65e0d3ae2ffa604155eebd96ed40da6567bd08f4`; checkout is detached and its
 resolved HEAD is checked before the build. All Docker base images are pinned by
-immutable digest. The page sets `Module.noInitialRun = true` and starts the
-engine only from `onRuntimeInitialized`, after preloaded files are ready. The
-capsule ships the doom-wasm/Chocolate Doom GPL-2.0 text alongside the Freedoom
-license and credits.
+immutable digest. Build-only autotools come from the HTTPS Ubuntu snapshot
+`20260701T000000Z` with exact package versions, so a failed live mirror cannot
+silently leave the build without candidates. The page sets
+`Module.noInitialRun = true` and starts the engine only from
+`onRuntimeInitialized`, after preloaded files are ready. The capsule ships the
+doom-wasm/Chocolate Doom GPL-2.0 text alongside the Freedoom license and credits.
 
 Run `tests/verify-reproducibility.sh` for the repository's static supply-chain
 and startup-contract checks.

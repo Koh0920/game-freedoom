@@ -3,8 +3,17 @@
 # (Chocolate Doom, GPL-2.0) built from a pinned commit with emscripten.
 # The WAD is fetched at page load (createPreloadedFile) - no id Software data.
 FROM emscripten/emsdk:3.1.28@sha256:5637bba16c0ff5de29ad35d777e32689f3cf66821047231c7ae3987575c8c662 AS engine
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      automake autoconf libtool pkg-config python3 && rm -rf /var/lib/apt/lists/*
+ARG UBUNTU_SNAPSHOT=20260701T000000Z
+RUN printf '%s\n' \
+      "deb [check-valid-until=no] https://snapshot.ubuntu.com/ubuntu/${UBUNTU_SNAPSHOT} jammy main" \
+      > /etc/apt/sources.list \
+ && apt-get -o Acquire::Retries=3 -o Acquire::Check-Valid-Until=false update \
+ && apt-get install -y --no-install-recommends \
+      automake=1:1.16.5-1.3 \
+      autoconf=2.71-2 \
+      libtool=2.4.6-15build2 \
+      pkg-config=0.29.2-1ubuntu3 \
+ && rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/cloudflare/doom-wasm.git /doom \
  && cd /doom \
  && git checkout --detach 65e0d3ae2ffa604155eebd96ed40da6567bd08f4 \
